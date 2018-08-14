@@ -13,6 +13,7 @@ setup(name='QuickUMLS',
       author='Tiago Ferreira',
       author_email='hello@tiagoferreira.me',
       url='https://github.com/tiago-ferreiraa/QuickUMLS',
+      packages=find_packages(),
       zip_safe=False,
       install_requires=requires,
       )
