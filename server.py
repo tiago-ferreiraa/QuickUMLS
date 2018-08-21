@@ -5,10 +5,11 @@ except ImportError:
     from .quickumls import QuickUMLS
     from .MinimalServer import run_server
 
+import json
 from argparse import ArgumentParser
 
 
-def run_quickumls_server(opts):
+def run_quickumls_server(opts, accepted_semtypes):
     matcher = QuickUMLS(
         quickumls_fp=opts.quickumls_fp,
         threshold=opts.threshold,
@@ -16,7 +17,8 @@ def run_quickumls_server(opts):
         similarity_name=opts.similarity_name,
         window=opts.window,
         min_match_length=opts.min_match_length,
-        verbose=opts.verbose
+        verbose=opts.verbose,
+        accepted_semtypes=accepted_semtypes
     )
 
     run_server(matcher, host=opts.host, port=opts.port, buffersize=4096)
@@ -35,6 +37,10 @@ if __name__ == '__main__':
     ap.add_argument(
         'quickumls_fp',
         help='directory where the QuickUMLS data files are installed.'
+    )
+    ap.add_argument(
+        'accepted_semtypes_file',
+        help='json file with accepted semtypes'
     )
 
     # server configuration
@@ -76,5 +82,11 @@ if __name__ == '__main__':
         help='return verbose information while running'
     )
 
+    # read json file with accepted semtypes
     opts = ap.parse_args()
-    run_quickumls_server(opts)
+    with open(opts.accepted_semtypes_file) as f:
+        accepted_semtypes_dict = json.load(f)
+    accepted_semtypes = set(accepted_semtypes_dict.keys())
+    
+
+    run_quickumls_server(opts, accepted_semtypes)
